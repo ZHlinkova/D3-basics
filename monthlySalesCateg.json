@@ -17,15 +17,15 @@
       },
       {
         "month": 1,
+        "sales": 225
+      },
+      {
+        "month": 1,
         "sales": 125
       },
       {
         "month": 1,
-        "sales": 225
-      },
-      {
-        "month": 1,
-        "sales": 225
+        "sales": 300
       }
     ]
   },
