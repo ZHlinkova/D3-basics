@@ -1,0 +1,62 @@
+[
+  {
+    "category": "Furniture",
+    "region": "West",
+    "monthlySales": [
+      {
+        "month": 1,
+        "sales": 29
+      },
+      {
+        "month": 1,
+        "sales": 125
+      },
+      {
+        "month": 1,
+        "sales": 425
+      },
+      {
+        "month": 1,
+        "sales": 125
+      },
+      {
+        "month": 1,
+        "sales": 225
+      },
+      {
+        "month": 1,
+        "sales": 225
+      }
+    ]
+  },
+  {
+    "category": "IT",
+    "region": "West",
+    "monthlySales": [
+      {
+        "month": 1,
+        "sales": 25
+      },
+      {
+        "month": 1,
+        "sales": 225
+      },
+      {
+        "month": 1,
+        "sales": 425
+      },
+      {
+        "month": 1,
+        "sales": 125
+      },
+      {
+        "month": 1,
+        "sales": 225
+      },
+      {
+        "month": 1,
+        "sales": 425
+      }
+    ]
+  }
+]
