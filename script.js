@@ -29,6 +29,10 @@ const padding = 5;
 const dataset = [5, 10, 15, 20, 25];
 const svg = d3.select("body").append("svg").attr("width", w).attr("height", h);
 
+//change
+
+console.log(`change`);
+
 const findMax = function (dataArray) {
   let maxTemp = 0;
   for (let i = 0; i < dataArray.length; i++) {
