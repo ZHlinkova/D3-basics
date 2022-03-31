@@ -1,6 +1,6 @@
 "use strict";
 
-const monthlyRev = [
+let monthlyRev = [
   {
     month: 20130101,
     sales: 0,
@@ -77,73 +77,130 @@ const maxDate = getDate(monthlyRev[monthlyRev.length - 1].month);
 
 // console.log(minDate, maxDate);
 
-const scaleLineX = d3.time
-  .scale()
-  .domain([minDate, maxDate])
-  .range([paddingLeft, wL - paddingLeft]);
+const buildLine = function () {
+  const minDate = getDate(monthlyRev[0].month);
+  const maxDate = getDate(monthlyRev[monthlyRev.length - 1].month);
+  const scaleLineX = d3.time
+    .scale()
+    .domain([minDate, maxDate])
+    .range([paddingLeft, wL - paddingLeft]);
 
-const scaleLineY = d3.scale
-  .linear()
-  .domain([0, maxY])
-  .range([hL - paddingBottom, paddingBottom]);
+  const scaleLineY = d3.scale
+    .linear()
+    .domain([0, maxY])
+    .range([hL - paddingBottom, paddingBottom]);
 
-const axisY = d3.svg.axis().scale(scaleLineY).ticks(5).orient("left");
+  const axisY = d3.svg.axis().scale(scaleLineY).ticks(5).orient("left");
 
-const axisX = d3.svg
-  .axis()
-  .scale(scaleLineX)
-  .orient("bottom")
-  .tickFormat(d3.time.format("%b"));
+  const axisX = d3.svg
+    .axis()
+    .scale(scaleLineX)
+    .orient("bottom")
+    .tickFormat(d3.time.format("%b"));
 
-// console.log(maxY, ratioY);
+  // console.log(maxY, ratioY);
 
-const lineFun = d3.svg
-  .line()
-  .x((d, i) => scaleLineX(getDate(d.month)))
-  .y((d) => scaleLineY(d.sales))
-  .interpolate("linear");
+  const lineFun = d3.svg
+    .line()
+    .x((d, i) => scaleLineX(getDate(d.month)))
+    .y((d) => scaleLineY(d.sales))
+    .interpolate("linear");
 
-const svg = d3
-  .select("#line-chart")
-  .append("svg")
-  .attr("width", wL)
-  .attr("height", hL);
+  const svg = d3
+    .select("#line-chart")
+    .append("svg")
+    .attr("width", wL)
+    .attr("height", hL)
+    .attr("id", "svg-furniture");
 
-const axisLeft = svg
-  .append("g")
-  .call(axisY)
-  .attr("class", "axis")
-  .attr("transform", `translate(${paddingLeft},0)`);
+  const axisLeft = svg
+    .append("g")
+    .call(axisY)
+    .attr("class", "axisY")
+    .attr("transform", `translate(${paddingLeft},0)`);
 
-const axisBottom = svg
-  .append("g")
-  .call(axisX)
-  .attr("class", "axis")
-  .attr("transform", `translate(0,${hL - paddingBottom})`);
+  const axisBottom = svg
+    .append("g")
+    .call(axisX)
+    .attr("class", "axisX")
+    .attr("transform", `translate(0,${hL - paddingBottom})`);
 
-const viz = svg
-  .append("path")
-  .attr("d", lineFun(monthlyRev))
-  .attr("stroke", "purple")
-  .attr("stroke-width", 2)
-  .attr("fill", "none");
+  const viz = svg
+    .append("path")
+    .attr("d", lineFun(monthlyRev))
+    .attr("stroke", "purple")
+    .attr("stroke-width", 2)
+    .attr("fill", "none")
+    .attr("class", "path-furniture");
 
-const lables = svg
-  .selectAll("text")
-  .data(monthlyRev)
-  .enter()
-  .append("text")
-  .text((d) => d.sales)
-  .attr("x", (d, i) => scaleLineX(getDate(d.month)))
-  .attr("y", (d) => scaleLineY(d.sales))
-  .attr("font-family", "sans-serif")
-  .attr("font-size", "18px")
-  .attr("text-anchor", "middle")
-  .attr("dy", "0.35em")
-  .attr("font-weight", function (d, i) {
-    if (i === 0 || i === monthlyRev.length - 1) {
-      return "bold";
-    } else {
-      return "normal";
-    }
-  });
+  const lables = svg
+    .selectAll("text")
+    .data(monthlyRev)
+    .enter()
+    .append("text")
+    .text((d) => d.sales)
+    .attr("x", (d, i) => scaleLineX(getDate(d.month)))
+    .attr("y", (d) => scaleLineY(d.sales))
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "18px")
+    .attr("text-anchor", "middle")
+    .attr("dy", "0.35em")
+    .attr("font-weight", function (d, i) {
+      if (i === 0 || i === monthlyRev.length - 1) {
+        return "bold";
+      } else {
+        return "normal";
+      }
+    });
+};
+
+const updateLine = function (ds, sel) {
+  const minDate = getDate(ds[0].month);
+  const maxDate = getDate(ds[ds.length - 1].month);
+  const scaleLineX = d3.time
+    .scale()
+    .domain([minDate, maxDate])
+    .range([paddingLeft, wL - paddingLeft]);
+
+  const scaleLineY = d3.scale
+    .linear()
+    .domain([0, maxY])
+    .range([hL - paddingBottom, paddingBottom]);
+
+  const axisY = d3.svg.axis().scale(scaleLineY).ticks(5).orient("left");
+
+  const axisX = d3.svg
+    .axis()
+    .scale(scaleLineX)
+    .orient("bottom")
+    .tickFormat(d3.time.format("%b"))
+    .ticks(ds.length - 1);
+  // console.log(maxY, ratioY);
+
+  const lineFun = d3.svg
+    .line()
+    .x((d, i) => scaleLineX(getDate(d.month)))
+    .y((d) => scaleLineY(d.sales))
+    .interpolate("linear");
+
+  const svg = d3.select("#line-chart").select("#svg-furniture");
+
+  const axisLeft = svg.selectAll("g.axisY").call(axisY);
+
+  const axisBottom = svg.selectAll("g.axisX").call(axisX);
+
+  const viz = svg.selectAll(".path-furniture").attr("d", lineFun(ds));
+};
+
+buildLine();
+
+d3.select("select").on("change", (d, i) => {
+  const sel = d3.select("#date-option").node().value;
+  let dataNew = [...monthlyRev];
+  console.log(dataNew);
+  console.log(sel);
+  console.log(monthlyRev.length);
+
+  dataNew.splice(0, monthlyRev.length - sel);
+  updateLine(dataNew, sel);
+});
