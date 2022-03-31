@@ -189,7 +189,12 @@ const updateLine = function (ds, sel) {
 
   const axisBottom = svg.selectAll("g.axisX").call(axisX);
 
-  const viz = svg.selectAll(".path-furniture").attr("d", lineFun(ds));
+  const viz = svg
+    .selectAll(".path-furniture")
+    .transition()
+    .duration(1000)
+    .ease("linear") //elastic//circle//bounce
+    .attr("d", lineFun(ds));
 };
 
 buildLine();
