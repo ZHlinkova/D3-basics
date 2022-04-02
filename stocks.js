@@ -39,9 +39,7 @@ function reportWindowSizeLoad() {
     .text(`Loaded at ${date}`);
 
   //drawLineChart
-  stocks.forEach((stockName) => {
-    getData(stockName); //this includes first drawing
-  });
+  getData();
 }
 
 //line chart variables
@@ -204,58 +202,15 @@ const reDrawLineChart = function (ds) {
     .attr("fill", "none");
 };
 
-const getData = function (stockName) {
-  d3.json(
-    `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stockName}&apikey=${apiKey}`,
-    function (err, data) {
-      if (err) {
-        return console.log(err);
-      } else {
-        console.log(data);
-        console.log(`>>>>>>>>>>Loading data from API: ${stockName} `);
+const getData = function () {
+  d3.json("stocksData.json", function (err, data) {
+    if (err) {
+      return console.log(err);
+    } else {
+      console.log(data);
 
-        const pricesDatesBack = Object.keys(data["Time Series (Daily)"]);
-
-        let pricesDates = [];
-
-        for (let i = 0; i < pricesDatesBack.length; i++) {
-          pricesDates.unshift(pricesDatesBack[i]);
-        }
-
-        const arrDays = Object.values(
-          Object.values(data["Time Series (Daily)"])
-        );
-
-        //   console.log(arrDays);
-        let prices = [];
-
-        for (let i = 0; i < arrDays.length; i++) {
-          prices.unshift(arrDays[i][`4. close`]);
-        }
-        //console.log(prices, pricesDates);
-
-        let priceDatePairs = [];
-
-        for (let i = 0; i < arrDays.length; i++) {
-          let tempObject = {};
-          tempObject.price = prices[i];
-          tempObject.date = pricesDates[i];
-          priceDatePairs.push(tempObject);
-        }
-
-        console.log(priceDatePairs);
-
-        dataJSONAll.push({
-          stockName: `${stockName}`,
-          priceSeries: priceDatePairs,
-        });
-
-        console.log(`All data: ${dataJSONAll[0].stockName}`);
-        console.log(`Data: ${priceDatePairs[0].price}`);
-
-        drawLineChart(priceDatePairs, stockName);
-        // return priceDatePairs;
-      }
+      reDrawLineChart(data);
+      // return priceDatePairs;
     }
-  );
+  });
 };
