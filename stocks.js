@@ -2,11 +2,8 @@
 
 //API variables
 const apiKey = `RZZ267K6YESB53V5`;
-const stocks = ["MELI", "BABA"];
-// const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
-//
-
-let dataJSONAll = [];
+// const stocks = ["MELI", "BABA"];
+const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
 let windowWidth;
 window.onresize = reportWindowSizeResize;
@@ -20,7 +17,8 @@ function reportWindowSizeResize() {
 
   //clear div before redrawing
   document.getElementById("line-chart").innerHTML = "";
-  reDrawLineChart(dataJSONAll);
+  //drawLineChart
+  getData();
 }
 
 function reportWindowSizeLoad() {
@@ -46,8 +44,8 @@ function reportWindowSizeLoad() {
 const hL = 200;
 const paddingL = 50;
 const paddingBottom = 20;
-const paddingLeft = 40;
-const ticksNox = 25;
+const paddingLeft = 60;
+const ticksNox = 5;
 const ticksNoY = 5;
 const dateFormat = "%d %b";
 
@@ -131,86 +129,92 @@ const drawLineChart = function (ds, stockName) {
     .attr("fill", "none");
 };
 
-//BUG - fix redrawing - I don't wabt to call the API again, why dataJSONall is undefined?
+// const reDrawLineChart = function (ds) {
+//   console.log(ds);
+//   // console.log(`>>>>>>>>>>RE Drawing line chart: ${ds.stockName}`);
+//   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
+//   const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
-const reDrawLineChart = function (ds) {
-  console.log(ds);
-  console.log(`>>>>>>>>>>RE Drawing line chart: ${ds.stockName}`);
-  const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
-  const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+//   const minDate = getDate(ds[0].date);
+//   const maxDate = getDate(ds[ds.length - 1].date);
 
-  const minDate = getDate(ds[0].date);
-  const maxDate = getDate(ds[ds.length - 1].date);
+//   //(minDate, maxDate);
 
-  //(minDate, maxDate);
+//   const maxY = d3.max(ds, (d) => Number(d.price));
 
-  const maxY = d3.max(ds, (d) => Number(d.price));
+//   console.log(maxY);
 
-  //console.log(maxY);
+//   const scaleLineX = d3.time
+//     .scale()
+//     .domain([minDate, maxDate])
+//     .range([paddingLeft, wL - paddingLeft]);
 
-  const scaleLineX = d3.time
-    .scale()
-    .domain([minDate, maxDate])
-    .range([paddingLeft, wL - paddingLeft]);
+//   const axisX = d3.svg
+//     .axis()
+//     .scale(scaleLineX)
+//     .orient("bottom")
+//     .ticks(ticksNox)
+//     .tickFormat(d3.time.format(dateFormat));
 
-  const axisX = d3.svg
-    .axis()
-    .scale(scaleLineX)
-    .orient("bottom")
-    .ticks(ticksNox)
-    .tickFormat(d3.time.format(dateFormat));
+//   const scaleLineY = d3.scale
+//     .linear()
+//     .domain([0, maxY])
+//     .range([hL - paddingBottom, paddingBottom]);
 
-  const scaleLineY = d3.scale
-    .linear()
-    .domain([0, maxY])
-    .range([hL - paddingBottom, paddingBottom]);
+//   const axisY = d3.svg.axis().scale(scaleLineY).ticks(ticksNoY).orient("left");
 
-  const axisY = d3.svg.axis().scale(scaleLineY).ticks(ticksNoY).orient("left");
+//   const lineFun = d3.svg
+//     .line()
+//     .x((d, i) => scaleLineX(getDate(d.date)))
+//     .y((d) => scaleLineY(d.price))
+//     .interpolate("linear");
 
-  const lineFun = d3.svg
-    .line()
-    .x((d, i) => scaleLineX(getDate(d.date)))
-    .y((d) => scaleLineY(d.price))
-    .interpolate("linear");
+//   ///add header
+//   // const header = d3.select(`#line-chart`).append(`h3`).text(`${ds.stockName}`);
 
-  ///add header
-  const header = d3.select(`#line-chart`).append(`h3`).text(`${ds.stockName}`);
+//   const svg = d3
+//     .select("#line-chart")
+//     .append("svg")
+//     .attr("width", wL)
+//     .attr("height", hL);
 
-  const svg = d3
-    .select("#line-chart")
-    .append("svg")
-    .attr("width", wL)
-    .attr("height", hL);
+//   const axisBottom = svg
+//     .append("g")
+//     .call(axisX)
+//     .attr("class", "axis")
+//     .attr("transform", `translate(0,${hL - paddingBottom})`);
 
-  const axisBottom = svg
-    .append("g")
-    .call(axisX)
-    .attr("class", "axis")
-    .attr("transform", `translate(0,${hL - paddingBottom})`);
+//   const axisLeft = svg
+//     .append("g")
+//     .call(axisY)
+//     .attr("class", "axis")
+//     .attr("transform", `translate(${paddingLeft},0)`);
 
-  const axisLeft = svg
-    .append("g")
-    .call(axisY)
-    .attr("class", "axis")
-    .attr("transform", `translate(${paddingLeft},0)`);
-
-  const viz = svg
-    .append("path")
-    .attr("d", lineFun(ds.priceSeries))
-    .attr("stroke", `${randomColor}`)
-    .attr("stroke-width", 2)
-    .attr("fill", "none");
-};
+//   const viz = svg
+//     .append("path")
+//     .attr("d", lineFun(ds.priceSeries))
+//     .attr("stroke", `${randomColor}`)
+//     .attr("stroke-width", 2)
+//     .attr("fill", "none");
+// };
 
 const getData = function () {
-  d3.json("stocksData.json", function (err, data) {
-    if (err) {
-      return console.log(err);
-    } else {
-      console.log(data);
+  d3.json(
+    "https://api.github.com/repos/ZHlinkova/D3-basics/contents/stocksData.json",
+    function (err, data) {
+      if (err) {
+        return console.log(err);
+      } else {
+        console.log(data);
+        const dataDecoded = JSON.parse(window.atob(data.content));
+        console.log(dataDecoded);
 
-      reDrawLineChart(data);
-      // return priceDatePairs;
+        for (let i = 0; i < stocks.length; i++) {
+          drawLineChart(dataDecoded[i].priceSeries, stocks[i]);
+        }
+
+        // return priceDatePairs;
+      }
     }
-  });
+  );
 };

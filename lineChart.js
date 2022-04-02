@@ -78,6 +78,11 @@ const maxDate = getDate(monthlyRev[monthlyRev.length - 1].month);
 // console.log(minDate, maxDate);
 
 const buildLine = function () {
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
   const minDate = getDate(monthlyRev[0].month);
   const maxDate = getDate(monthlyRev[monthlyRev.length - 1].month);
   const scaleLineX = d3.time
@@ -132,6 +137,29 @@ const buildLine = function () {
     .attr("stroke-width", 2)
     .attr("fill", "none")
     .attr("class", "path-furniture");
+
+  const dots = svg
+    .selectAll("circle")
+    .data(monthlyRev)
+    .enter()
+    .append("circle")
+    .attr({
+      cx: (d, i) => scaleLineX(getDate(d.month)),
+      cy: (d) => scaleLineY(d.sales),
+      r: "4px",
+      fill: "purple",
+      class: "circle-furniture",
+    })
+    .on("mouseover", function (d) {
+      tooltip.transition().duration(500).style("opacity", 0.85);
+      tooltip
+        .html(`<strong>Sales: ${d.sales} CZK</strong>`)
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY - 28 + "px");
+    })
+    .on("mouseout", function (d) {
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
 
   const lables = svg
     .selectAll("text")
@@ -195,6 +223,16 @@ const updateLine = function (ds, sel) {
     .duration(1000)
     .ease("linear") //elastic//circle//bounce
     .attr("d", lineFun(ds));
+
+  const dots = svg
+    .selectAll(".circle-furniture")
+    .transition()
+    .duration(1000)
+    .ease("linear")
+    .attr({
+      cx: (d, i) => scaleLineX(getDate(d.month)),
+      cy: (d) => scaleLineY(d.sales),
+    });
 };
 
 buildLine();
