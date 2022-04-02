@@ -80,19 +80,25 @@ svgBarChart
   .attr("y", (d) => h - d * ratio)
   .attr("width", w / dataset.length - padding)
   .attr("height", (d) => d * ratio)
-  .style("fill", (d) => colorPicker(d));
+  .style("fill", (d) => colorPicker(d))
+  .on("mouseover", function (d) {
+    svgBarChart
+      .append("text")
+      .text(d)
+      .attr("text-anchor", "middle")
+      .attr(
+        "x",
+        parseFloat(d3.select(this).attr("x")) +
+          parseFloat(d3.select(this).attr("width") / 2)
+      )
+      .attr("y", parseFloat(d3.select(this).attr("y")) - 20)
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "18px")
+      .attr("id", "tooltip");
+  })
+  .on("mouseout", function () {
+    d3.select("#tooltip").remove();
+  });
 
-svgBarChart
-  .selectAll("text")
-  .data(dataset)
-  .enter()
-  .append("text")
-  .text((d) => d)
-  .attr("text-anchor", "middle")
-  .attr(
-    "x",
-    (d, i) => i * (w / dataset.length) + (w / dataset.length - padding) / 2
-  )
-  .attr("y", (d) => h - d * ratio - 5)
-  .attr("font-family", "sans-serif")
-  .attr("font-size", "18px");
+// .append("title") ///add basic tooltips
+// .text((d) => d);
